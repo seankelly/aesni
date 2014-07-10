@@ -8,7 +8,12 @@ static void aes_encrypt_block_aesni(const unsigned char *, unsigned char *, cons
 int
 use_aesni()
 {
+	/* I only have 64 bit systems on which to test. */
+#ifdef __x86_64__
 	return -1;
+#else
+	return -1;
+#endif
 }
 
 void
