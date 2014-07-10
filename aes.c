@@ -8,7 +8,7 @@ static void aes_encrypt_block_aesni(const unsigned char *, unsigned char *, cons
 int
 use_aesni()
 {
-	return 0;
+	return -1;
 }
 
 void
