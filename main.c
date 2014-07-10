@@ -2,8 +2,10 @@
 
 #include "aes.h"
 
-int main(int argc, char **argv) {
-    aes_init();
+int
+main(int argc, char **argv)
+{
+	aes_init();
 
-    return 0;
+	return 0;
 }
