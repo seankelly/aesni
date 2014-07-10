@@ -69,8 +69,6 @@ main(int argc, char **argv)
 	long blocks;
 	char *nptr;
 
-	aes_init();
-
 	blocks = 10;
 	if (argc > 1)
 	{
