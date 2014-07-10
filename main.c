@@ -42,7 +42,7 @@ test_aes_encrypt(long blocks)
 
 		memcpy(my_aes, openssl, sizeof(my_aes));
 
-		AES_set_encrypt_key(key, 256, &aes_key);
+		AES_set_encrypt_key(key, sizeof(key)*8, &aes_key);
 
 		AES_encrypt(openssl, openssl, &aes_key);
 		aes_encrypt_block(my_aes, my_aes, &aes_key);
