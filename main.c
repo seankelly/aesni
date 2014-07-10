@@ -14,7 +14,8 @@ test_aes_encrypt(long blocks)
 {
 	long i;
 	int fd;
-	char key[32], openssl[16], my_aes[16];
+	unsigned char key[32], openssl[16], my_aes[16];
+	AES_KEY aes_key;
 
 	fd = open("/dev/urandom", O_RDONLY|O_CLOEXEC);
 	if (fd < 0)
@@ -40,6 +41,8 @@ test_aes_encrypt(long blocks)
 		}
 
 		memcpy(my_aes, openssl, sizeof(my_aes));
+
+		AES_set_encrypt_key(key, 256, &aes_key);
 	}
 
 err:
