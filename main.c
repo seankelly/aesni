@@ -22,6 +22,10 @@ test_aes_encrypt(long blocks)
 		return;
 	}
 
+	memset(key, 0, sizeof(key));
+	memset(openssl, 0, sizeof(key));
+	memset(my_aes, 0, sizeof(key));
+
 	for (i = 0; i < blocks; i++)
 	{
 		ssize_t n;
