@@ -46,7 +46,18 @@ test_aes_encrypt(long blocks)
 
 		AES_encrypt(openssl, openssl, &aes_key);
 		aes_encrypt_block(my_aes, my_aes, &aes_key);
+
+		if (memcmp(openssl, my_aes, sizeof(openssl)) == 0)
+		{
+			printf(".");
+		}
+		else
+		{
+			printf("x");
+		}
 	}
+
+	printf("\n");
 
 err:
 	close(fd);
