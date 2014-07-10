@@ -14,7 +14,14 @@ use_aesni()
 void
 aes_encrypt_block(const unsigned char *in, unsigned char *out, const AES_KEY *key)
 {
-	if (use_aesni())
+	static int aesni;
+
+	if (aesni == 0)
+	{
+		aesni = use_aesni();
+	}
+
+	if (aesni == 1)
 	{
 		aes_encrypt_block_aesni(in, out, key);
 	}
