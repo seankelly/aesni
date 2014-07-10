@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 #include "aes.h"
@@ -23,8 +24,21 @@ test_aes_encrypt(long blocks)
 
 	for (i = 0; i < blocks; i++)
 	{
+		ssize_t n;
+
+		if ((n = read(fd, key, sizeof(key))) < 0)
+		{
+			goto err;
+		}
+		if ((n = read(fd, openssl, sizeof(openssl))) < 0)
+		{
+			goto err;
+		}
+
+		memcpy(my_aes, openssl, sizeof(my_aes));
 	}
 
+err:
 	close(fd);
 }
 
