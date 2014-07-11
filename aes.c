@@ -68,5 +68,43 @@ aes_encrypt_block_openssl(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 static void
 aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 {
+#if 0
 	AES_encrypt(in, out, key);
+#else
+	int final_index = 10;
+	long long aes_state;
+	long long aes_key[4 * (AES_MAXNR + 1)];
+
+	memcpy(&aes_state, in, sizeof(aes_state));
+	memcpy(aes_key, key->rd_key, sizeof(aes_key));
+
+	asm volatile ("pxor   %0, %1" : "=x" (aes_state) : "x" (aes_key[0]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[1]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[2]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[3]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[4]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[5]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[6]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[7]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[8]));
+	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[9]));
+
+	if (key->rounds > 10)
+	{
+		final_index = 12;
+		asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[10]));
+		asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[11]));
+		if (key->rounds > 12)
+		{
+			final_index = 14;
+			asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[12]));
+			asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[13]));
+		}
+	}
+
+	asm volatile ("aesenclast %0, %1" : "=x" (aes_state) : "x" (aes_key[final_index]));
+
+	memcpy(out, &aes_state, sizeof(aes_state));
+
+#endif
 }
