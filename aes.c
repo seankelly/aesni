@@ -1,9 +1,11 @@
+#include <stdint.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "aes.h"
 
-static void aes_encrypt_block_openssl(const unsigned char *, unsigned char *, const AES_KEY *);
-static void aes_encrypt_block_aesni(const unsigned char *, unsigned char *, const AES_KEY *);
+static void aes_encrypt_block_openssl(const uint8_t *, uint8_t *, const AES_KEY *);
+static void aes_encrypt_block_aesni(const uint8_t *, uint8_t *, const AES_KEY *);
 
 #define CPUID_EAX 1
 #define CPUID_ECX_BIT (0x2000000)
@@ -38,7 +40,7 @@ use_aesni()
 }
 
 void
-aes_encrypt_block(const unsigned char *in, unsigned char *out, const AES_KEY *key)
+aes_encrypt_block(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 {
 	static int aesni;
 
@@ -58,13 +60,13 @@ aes_encrypt_block(const unsigned char *in, unsigned char *out, const AES_KEY *ke
 }
 
 static void
-aes_encrypt_block_openssl(const unsigned char *in, unsigned char *out, const AES_KEY *key)
+aes_encrypt_block_openssl(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 {
 	AES_encrypt(in, out, key);
 }
 
 static void
-aes_encrypt_block_aesni(const unsigned char *in, unsigned char *out, const AES_KEY *key)
+aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 {
 	AES_encrypt(in, out, key);
 }

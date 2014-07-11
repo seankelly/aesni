@@ -2,6 +2,7 @@
 #include <sys/stat.h>
 
 #include <fcntl.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +15,7 @@ test_aes_encrypt(long blocks)
 {
 	long i;
 	int fd;
-	unsigned char key[32], openssl[16], my_aes[16];
+	uint8_t key[32], openssl[16], my_aes[16];
 	AES_KEY aes_key;
 
 	fd = open("/dev/urandom", O_RDONLY|O_CLOEXEC);

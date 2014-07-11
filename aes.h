@@ -1,4 +1,6 @@
 #include <openssl/aes.h>
 
+#include <stdint.h>
+
 void aes_init(void);
-void aes_encrypt_block(const unsigned char *, unsigned char *, const AES_KEY *);
+void aes_encrypt_block(const uint8_t *, uint8_t *, const AES_KEY *);
