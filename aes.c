@@ -31,7 +31,7 @@ use_aesni()
 	}
 #endif
 
-	return (c & CPUID_ECX_BIT);
+	return (c & CPUID_ECX_BIT) ? 1 : -1;
 #else
 	return -1;
 #endif
