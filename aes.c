@@ -24,6 +24,13 @@ use_aesni()
 
 	);
 
+#ifdef DEBUG
+	if ((c & CPUID_ECX_BIT))
+	{
+		printf("AES-NI enabled\n");
+	}
+#endif
+
 	return (c & CPUID_ECX_BIT);
 #else
 	return -1;
