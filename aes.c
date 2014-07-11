@@ -5,12 +5,26 @@
 static void aes_encrypt_block_openssl(const unsigned char *, unsigned char *, const AES_KEY *);
 static void aes_encrypt_block_aesni(const unsigned char *, unsigned char *, const AES_KEY *);
 
+#define CPUID_EAX 1
+#define CPUID_ECX_BIT (0x2000000)
+
 int
 use_aesni()
 {
 	/* I only have 64 bit systems on which to test. */
 #ifdef __x86_64__
-	return -1;
+	int a, b, c, d;
+	asm volatile (
+		"cpuid"
+		: "=a" (a),
+		"=b" (b),
+		"=c" (c),
+		"=d" (d)
+		: "a" (CPUID_EAX)
+
+	);
+
+	return (c & CPUID_ECX_BIT);
 #else
 	return -1;
 #endif
