@@ -1,5 +1,5 @@
 OPENSSL_LIBS = -lcrypto
-CFLAGS = -DDEBUG -Og -g -Wall -Wextra -Werror
+CFLAGS = -DDEBUG -Og -g -Wall
 LDFLAGS = $(OPENSSL_LIBS)
 
 aes: aes.o main.o
