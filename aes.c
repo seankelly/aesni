@@ -95,6 +95,7 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 		asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[160]));
 		asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[176]));
 		final_index = 192;
+
 		if (key->rounds > 12)
 		{
 			asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[192]));
