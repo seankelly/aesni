@@ -43,6 +43,7 @@ test_aes_encrypt(long blocks, int bench)
 {
 	long i;
 	int fd;
+	int passed, failed;
 	uint8_t key[32], openssl[16], my_aes[16];
 	AES_KEY aes_key;
 	struct timespec openssl_clock, my_aes_clock;
@@ -52,6 +53,7 @@ test_aes_encrypt(long blocks, int bench)
 		return;
 	}
 
+	passed = failed = 0;
 	memset(key, 0, sizeof(key));
 	memset(openssl, 0, sizeof(key));
 	memset(my_aes, 0, sizeof(key));
@@ -76,14 +78,14 @@ test_aes_encrypt(long blocks, int bench)
 		BENCH(bench, aes_encrypt_block(my_aes, my_aes, &aes_key), my_aes_clock);
 
 		if (memcmp(openssl, my_aes, sizeof(openssl)) == 0) {
-			printf(".");
+			passed++;
 		}
 		else {
-			printf("x");
+			failed++;
 		}
 	}
 
-	printf("\n");
+	printf("Pass/Fail: %d/%d\n", passed, failed);
 
 	if (bench == 1) {
 		printf("openssl: %ld.%ld\n", openssl_clock.tv_sec, openssl_clock.tv_nsec);
