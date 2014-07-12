@@ -81,8 +81,8 @@ main(int argc, char **argv)
 	argc -= optind;
 	argv += optind;
 
-	if (argc > 1) {
-		long b = strtol(argv[1], &nptr, 10);
+	if (argc >= 1) {
+		long b = strtol(argv[0], &nptr, 10);
 		if (argv[1] != nptr) {
 			blocks = b;
 		}
