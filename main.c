@@ -6,9 +6,37 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include "aes.h"
+
+#define NANOSECONDS  1000000000
+#define BENCH(b, f, c)                                            \
+	{                                                         \
+		struct timespec s, e;                             \
+		if (b == 1) {                                     \
+			clock_gettime(CLOCK_REALTIME, &s);        \
+		}                                                 \
+		f;                                                \
+		if (b == 1) {                                     \
+			clock_gettime(CLOCK_REALTIME, &e);        \
+			c.tv_sec += (e.tv_sec - s.tv_sec);        \
+			if (e.tv_nsec >= s.tv_nsec) {             \
+				c.tv_nsec += (e.tv_nsec - s.tv_nsec);  \
+			}                                         \
+			else {                                    \
+				c.tv_sec--;                       \
+				c.tv_nsec += NANOSECONDS +        \
+				    (e.tv_nsec - s.tv_nsec);      \
+			}                                         \
+			if (c.tv_nsec >= NANOSECONDS) {           \
+				c.tv_nsec -= NANOSECONDS;         \
+				c.tv_sec++;                       \
+			}                                         \
+		}                                                 \
+	}
+
 
 static void
 test_aes_encrypt(long blocks, int bench)
@@ -17,6 +45,7 @@ test_aes_encrypt(long blocks, int bench)
 	int fd;
 	uint8_t key[32], openssl[16], my_aes[16];
 	AES_KEY aes_key;
+	struct timespec openssl_clock, my_aes_clock;
 
 	fd = open("/dev/urandom", O_RDONLY|O_CLOEXEC);
 	if (fd < 0) {
@@ -26,6 +55,8 @@ test_aes_encrypt(long blocks, int bench)
 	memset(key, 0, sizeof(key));
 	memset(openssl, 0, sizeof(key));
 	memset(my_aes, 0, sizeof(key));
+	memset(&openssl_clock, 0, sizeof(openssl_clock));
+	memset(&my_aes_clock, 0, sizeof(my_aes_clock));
 
 	for (i = 0; i < blocks; i++) {
 		ssize_t n;
@@ -41,10 +72,8 @@ test_aes_encrypt(long blocks, int bench)
 
 		AES_set_encrypt_key(key, sizeof(key)*8, &aes_key);
 
-		if (bench == 1) {
-		}
-		AES_encrypt(openssl, openssl, &aes_key);
-		aes_encrypt_block(my_aes, my_aes, &aes_key);
+		BENCH(bench, AES_encrypt(openssl, openssl, &aes_key), openssl_clock);
+		BENCH(bench, aes_encrypt_block(my_aes, my_aes, &aes_key), my_aes_clock);
 
 		if (memcmp(openssl, my_aes, sizeof(openssl)) == 0) {
 			printf(".");
@@ -55,6 +84,11 @@ test_aes_encrypt(long blocks, int bench)
 	}
 
 	printf("\n");
+
+	if (bench == 1) {
+		printf("openssl: %ld.%ld\n", openssl_clock.tv_sec, openssl_clock.tv_nsec);
+		printf("my aes: %ld.%ld\n", my_aes_clock.tv_sec, my_aes_clock.tv_nsec);
+	}
 
 err:
 	close(fd);
