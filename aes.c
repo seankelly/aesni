@@ -71,38 +71,39 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 #if 0
 	AES_encrypt(in, out, key);
 #else
-	int final_index = 10;
-	long long aes_state;
-	long long aes_key[4 * (AES_MAXNR + 1)];
+	int final_index;
+	uint8_t aes_state[16];
+	uint8_t aes_key[4 * 4 * (AES_MAXNR + 1)];
 
-	memcpy(&aes_state, in, sizeof(aes_state));
 	memcpy(aes_key, key->rd_key, sizeof(aes_key));
 
-	asm volatile ("pxor   %0, %1" : "=x" (aes_state) : "x" (aes_key[0]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[1]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[2]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[3]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[4]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[5]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[6]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[7]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[8]));
-	asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[9]));
+	asm volatile ("movdqu %1, %0" : "=x" (aes_state) : "m" (in[0]));
+	asm volatile ("pxor   %1, %0" : "=x" (aes_state) : "m" (aes_key[0]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[16]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[32]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[48]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[64]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[80]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[96]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[112]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[128]));
+	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[144]));
+	final_index = 160;
 
 	if (key->rounds > 10)
 	{
-		final_index = 12;
-		asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[10]));
-		asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[11]));
+		asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[160]));
+		asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[176]));
+		final_index = 192;
 		if (key->rounds > 12)
 		{
-			final_index = 14;
-			asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[12]));
-			asm volatile ("aesenc %0, %1" : "=x" (aes_state) : "x" (aes_key[13]));
+			asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[192]));
+			asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[208]));
+			final_index = 224;
 		}
 	}
 
-	asm volatile ("aesenclast %0, %1" : "=x" (aes_state) : "x" (aes_key[final_index]));
+	asm volatile ("aesenclast %1, %0" : "=x" (aes_state) : "m" (aes_key[final_index]));
 
 	memcpy(out, &aes_state, sizeof(aes_state));
 
