@@ -1,6 +1,6 @@
-OPENSSL_PC := $(shell pkg-config --cflags --libs openssl)
+OPENSSL_LIBS = -lcrypto
 CFLAGS = -DDEBUG -Og -g -Wall -Wextra -Werror
-LDFLAGS = $(OPENSSL_PC)
+LDFLAGS = $(OPENSSL_LIBS)
 
 aes: aes.o main.o
 
