@@ -27,8 +27,7 @@ use_aesni()
 	);
 
 #ifdef DEBUG
-	if ((c & CPUID_ECX_BIT))
-	{
+	if ((c & CPUID_ECX_BIT)) {
 		printf("AES-NI enabled\n");
 	}
 #endif
@@ -44,17 +43,14 @@ aes_encrypt_block(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 {
 	static int aesni;
 
-	if (aesni == 0)
-	{
+	if (aesni == 0) {
 		aesni = use_aesni();
 	}
 
-	if (aesni == 1)
-	{
+	if (aesni == 1) {
 		aes_encrypt_block_aesni(in, out, key);
 	}
-	else
-	{
+	else {
 		aes_encrypt_block_openssl(in, out, key);
 	}
 }
@@ -90,14 +86,12 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 	asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[144]));
 	final_index = 160;
 
-	if (key->rounds > 10)
-	{
+	if (key->rounds > 10) {
 		asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[160]));
 		asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[176]));
 		final_index = 192;
 
-		if (key->rounds > 12)
-		{
+		if (key->rounds > 12) {
 			asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[192]));
 			asm volatile ("aesenc %1, %0" : "=x" (aes_state) : "m" (aes_key[208]));
 			final_index = 224;
