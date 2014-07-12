@@ -11,7 +11,7 @@
 #include "aes.h"
 
 static void
-test_aes_encrypt(long blocks)
+test_aes_encrypt(long blocks, int bench)
 {
 	long i;
 	int fd;
@@ -41,6 +41,8 @@ test_aes_encrypt(long blocks)
 
 		AES_set_encrypt_key(key, sizeof(key)*8, &aes_key);
 
+		if (bench == 1) {
+		}
 		AES_encrypt(openssl, openssl, &aes_key);
 		aes_encrypt_block(my_aes, my_aes, &aes_key);
 
@@ -63,8 +65,22 @@ main(int argc, char **argv)
 {
 	long blocks;
 	char *nptr;
+	char ch;
+	int bench;
 
+	bench = 0;
 	blocks = 10;
+	while ((ch = getopt(argc, argv, "b")) != -1) {
+		switch (ch) {
+		case 'b':
+			bench = 1;
+			break;
+		}
+	}
+
+	argc -= optind;
+	argv += optind;
+
 	if (argc > 1) {
 		long b = strtol(argv[1], &nptr, 10);
 		if (argv[1] != nptr) {
