@@ -4,4 +4,7 @@ LDFLAGS = $(OPENSSL_PC)
 
 aes: aes.o main.o
 
+clean:
+	rm -f aes.o main.o aes
+
 main.o: aes.h
