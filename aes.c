@@ -10,7 +10,7 @@ static void aes_encrypt_block_aesni(const uint8_t *, uint8_t *, const AES_KEY *)
 #define CPUID_EAX 1
 #define CPUID_ECX_BIT (0x2000000)
 
-int
+static int
 use_aesni()
 {
 	/* I only have 64 bit systems on which to test. */
