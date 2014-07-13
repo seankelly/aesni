@@ -69,9 +69,9 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 	AES_encrypt(in, out, key);
 #else
 	int final_index;
-	uint8_t aes_key[4 * 4 * (AES_MAXNR + 1)];
+	const uint32_t *aes_key;
 
-	memcpy(aes_key, key->rd_key, sizeof(aes_key));
+	aes_key = key->rd_key;
 
 	/*
 	 * Load in block into xmm0. Blocks from round keys will be loaded into
@@ -104,22 +104,22 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 		"aesenc %%xmm2, %%xmm0\n\t"
 		"aesenc %%xmm3, %%xmm0"
 		:
-		: "m" (in[0]), "m" (aes_key[0]), "m" (aes_key[16]),
-		"m" (aes_key[32]), "m" (aes_key[48]), "m" (aes_key[64]),
-		"m" (aes_key[80]), "m" (aes_key[96]), "m" (aes_key[112]),
-		"m" (aes_key[128]), "m" (aes_key[144])
+		: "m" (in[0]), "m" (aes_key[0]), "m" (aes_key[4]),
+		"m" (aes_key[8]), "m" (aes_key[12]), "m" (aes_key[16]),
+		"m" (aes_key[20]), "m" (aes_key[24]), "m" (aes_key[28]),
+		"m" (aes_key[32]), "m" (aes_key[36])
 	);
-	final_index = 160;
+	final_index = 40;
 
 	if (key->rounds > 10) {
-		final_index = 192;
+		final_index = 48;
 		asm volatile (
 			"movdqu %0, %%xmm4\n\t"
 			"movdqu %1, %%xmm5\n\t"
 			"aesenc %%xmm4, %%xmm0\n\t"
 			"aesenc %%xmm5, %%xmm0"
 			:
-			: "m" (aes_key[160]), "m" (aes_key[176])
+			: "m" (aes_key[40]), "m" (aes_key[44])
 		);
 
 		if (key->rounds > 12) {
@@ -129,9 +129,9 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 				"aesenc %%xmm6, %%xmm0\n\t"
 				"aesenc %%xmm7, %%xmm0"
 				:
-				: "m" (aes_key[192]), "m" (aes_key[208])
+				: "m" (aes_key[48]), "m" (aes_key[52])
 			);
-			final_index = 224;
+			final_index = 56;
 		}
 	}
 
