@@ -69,7 +69,6 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 	AES_encrypt(in, out, key);
 #else
 	int final_index;
-	uint8_t aes_state[16];
 	uint8_t aes_key[4 * 4 * (AES_MAXNR + 1)];
 
 	memcpy(aes_key, key->rd_key, sizeof(aes_key));
@@ -140,11 +139,9 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 		"movdqu %1, %%xmm1\n\t"
 		"aesenclast %%xmm1, %%xmm0\n\t"
 		"movdqu %%xmm0, %0"
-		: "=m" (aes_state)
+		: "=m" (*out)
 		: "m" (aes_key[final_index])
 	);
-
-	memcpy(out, &aes_state, sizeof(aes_state));
 
 #endif
 }
