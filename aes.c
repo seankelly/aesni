@@ -103,7 +103,7 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 		"movdqu %10, %%xmm3\n\t"
 		"aesenc %%xmm1, %%xmm0\n\t"
 		"aesenc %%xmm2, %%xmm0\n\t"
-		"aesenc %%xmm3, %%xmm0\n\t"
+		"aesenc %%xmm3, %%xmm0"
 		:
 		: "m" (in[0]), "m" (aes_key[0]), "m" (aes_key[16]),
 		"m" (aes_key[32]), "m" (aes_key[48]), "m" (aes_key[64]),
@@ -118,7 +118,7 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 			"movdqu %0, %%xmm4\n\t"
 			"movdqu %1, %%xmm5\n\t"
 			"aesenc %%xmm4, %%xmm0\n\t"
-			"aesenc %%xmm5, %%xmm0\n\t"
+			"aesenc %%xmm5, %%xmm0"
 			:
 			: "m" (aes_key[160]), "m" (aes_key[176])
 		);
@@ -128,7 +128,7 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 				"movdqu %0, %%xmm6\n\t"
 				"movdqu %1, %%xmm7\n\t"
 				"aesenc %%xmm6, %%xmm0\n\t"
-				"aesenc %%xmm7, %%xmm0\n\t"
+				"aesenc %%xmm7, %%xmm0"
 				:
 				: "m" (aes_key[192]), "m" (aes_key[208])
 			);
@@ -139,7 +139,7 @@ aes_encrypt_block_aesni(const uint8_t *in, uint8_t *out, const AES_KEY *key)
 	asm volatile (
 		"movdqu %1, %%xmm1\n\t"
 		"aesenclast %%xmm1, %%xmm0\n\t"
-		"movdqu %%xmm0, %0\n\t"
+		"movdqu %%xmm0, %0"
 		: "=m" (aes_state)
 		: "m" (aes_key[final_index])
 	);
