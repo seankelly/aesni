@@ -1,3 +1,4 @@
+#include <cpuid.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -16,24 +17,19 @@ use_aesni(void)
 {
 	/* I only have 64 bit systems on which to test. */
 #ifdef __x86_64__
-	int a, b, c, d;
-	asm volatile (
-		"cpuid"
-		: "=a" (a),
-		"=b" (b),
-		"=c" (c),
-		"=d" (d)
-		: "a" (CPUID_EAX)
-
-	);
+	unsigned int a, b, c, d;
+	if (__get_cpuid(CPUID_EAX, &a, &b, &c, &d) == 0) {
+		/* Failure. */
+		return -1;
+	}
 
 #ifdef DEBUG
-	if ((c & CPUID_ECX_BIT)) {
+	if ((c & bit_AES)) {
 		printf("AES-NI enabled\n");
 	}
 #endif
 
-	return (c & CPUID_ECX_BIT) ? 1 : -1;
+	return (c & bit_AES) ? 1 : -1;
 #else
 	return -1;
 #endif
