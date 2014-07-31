@@ -13,3 +13,5 @@ clean:
 	rm -f $(OBJECT_FILES) aes
 
 main.o: aes.h
+aes.o: cpusupport.h
+cpusupport_x86_aesni_detect.o: cpusupport.h
