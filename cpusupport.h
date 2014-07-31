@@ -1,15 +1,19 @@
-int cpusupport_x86_aesni_present;
-int cpusupport_x86_aesni_init;
-int cpusupport_x86_aesni_detect(void);
+#define CPUSUPPORT_FEATURE(arch, feature)	\
+	int cpusupport_ ## arch ## _ ## feature ## _present;	\
+	int cpusupport_ ## arch ## _ ## feature ## _init;		\
+	int cpusupport_ ## arch ## _ ## feature ## _detect(void);	\
+							\
+	static inline int				\
+	cpusupport_ ## arch ## _ ## feature(void)		\
+	{						\
+		if (cpusupport_ ## arch ## _ ## feature ## _present)	\
+			return (1);					\
+		else if (cpusupport_ ## arch ## _ ## feature ## _init)	\
+			return (0);					\
+		cpusupport_ ## arch ## _ ## feature ## _present = 	\
+		    cpusupport_ ## arch ##_ ## feature ## _detect();	\
+		cpusupport_ ## arch ## _ ## feature ## _init = 1;	\
+		return (cpusupport_ ## arch ## _ ## feature ## _present); \
+	}
 
-static inline int
-cpusupport_x86_aesni(void)
-{
-	if (cpusupport_x86_aesni_present)
-		return (1);
-	else if (cpusupport_x86_aesni_init)
-		return (0);
-	cpusupport_x86_aesni_present = cpusupport_x86_aesni_detect();
-	cpusupport_x86_aesni_init = 1;
-	return (cpusupport_x86_aesni_present);
-}
+CPUSUPPORT_FEATURE(x86, aesni)
