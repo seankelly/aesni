@@ -1,5 +1,4 @@
 #include <cpuid.h>
-#include <stdint.h>
 #include <stdio.h>
 
 #include "cpusupport.h"
