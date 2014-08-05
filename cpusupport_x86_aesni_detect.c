@@ -1,5 +1,7 @@
 #include <cpuid.h>
+#ifdef DEBUG
 #include <stdio.h>
+#endif
 
 #include "cpusupport.h"
 
