@@ -3,7 +3,7 @@ CFLAGS = -DDEBUG -DCPUSUPPORT_X86_AESNI -O0 -g -Wall -Wextra
 LDFLAGS = $(OPENSSL_LIBS)
 
 OBJECT_FILES = aes.o main.o \
-	       cpusupport_x86_aesni.o cpusupport_x86_aesni_detect.o
+	       aes_aesni.o cpusupport_x86_aesni_detect.o
 
 
 aes: $(OBJECT_FILES)
@@ -15,4 +15,4 @@ clean:
 main.o: aes.h
 aes.o: cpusupport.h
 cpusupport_x86_aesni_detect.o: cpusupport.h
-cpusupport_x86_aesni.o: CFLAGS += -maes
+aes_aesni.o: CFLAGS += -maes
