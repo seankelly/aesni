@@ -9,8 +9,7 @@
 int
 cpusupport_x86_aesni_detect(void)
 {
-	/* I only have 64 bit systems on which to test. */
-#ifdef __x86_64__
+#ifdef CPUSUPPORT_X86_CPUID
 	unsigned int a, b, c, d;
 	if (__get_cpuid(CPUID_EAX, &a, &b, &c, &d) == 0) {
 		/* Failure. */
