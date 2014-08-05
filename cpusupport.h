@@ -1,3 +1,7 @@
+#ifdef CPUSUPPORT_CONFIG_FILE
+#include CPUSUPPORT_CONFIG_FILE
+#endif
+
 #define CPUSUPPORT_FEATURE(arch, feature)	\
 	int cpusupport_ ## arch ## _ ## feature ## _present;	\
 	int cpusupport_ ## arch ## _ ## feature ## _init;		\
